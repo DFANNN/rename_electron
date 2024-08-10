@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <router-view />
-  </div>
+  <div>插入文本</div>
 </template>
 
 <script setup lang="ts"></script>

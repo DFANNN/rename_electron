@@ -1,13 +1,15 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { exec } from 'child_process'
+import util from 'util'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1000,
+    height: 770,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -51,6 +53,13 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // 获取磁盘
+  const execPromise = util.promisify(exec)
+  ipcMain.handle('get-disk', async () => {
+    const { stdout } = await execPromise('wmic logicaldisk get name')
+    return stdout.trim().split('\n').slice(1)
+  })
 
   createWindow()
 

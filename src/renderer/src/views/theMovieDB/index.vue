@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <router-view />
-  </div>
+  <div>theMovieDB</div>
 </template>
 
 <script setup lang="ts"></script>
