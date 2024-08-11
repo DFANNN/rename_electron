@@ -7,11 +7,18 @@
       align-center
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      @close="close"
     >
       <el-form :model="fileForm" label-position="top">
         <el-form-item label="文件夹地址：">
           <el-select v-model="fileForm.path" placeholder="请选择文件夹地址">
-            <el-option v-for="item in diskOptions" :key="item" :label="item" :value="item" />
+            <el-option
+              v-for="item in diskOptions"
+              :key="item.path"
+              :label="item.name"
+              :value="item.path"
+              @click="getDiskFile(item)"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -23,7 +30,7 @@
             </el-icon>
           </div>
 
-          <div class="disk-name">{{ item }}</div>
+          <div class="disk-name">{{ item.name }}</div>
 
           <div>
             <el-icon>
@@ -39,12 +46,18 @@
 
 <script setup lang="ts">
 import { FolderOpened, ArrowRightBold } from '@element-plus/icons-vue'
+import type { IDisk } from '@renderer/types/layout'
+import { useCommonStore } from '../store/common'
+
+const emit = defineEmits(['getFileMovie'])
+// store
+const commonStore = useCommonStore()
 // dialog开关
 const dialogVisible = ref(false)
 
 // 磁盘列表
-const diskOptions = ref<string[]>([])
-const diskList = ref<string[]>([])
+const diskOptions = ref<IDisk[]>([])
+const diskList = ref<IDisk[]>([])
 
 // form
 const fileForm = ref({
@@ -53,18 +66,40 @@ const fileForm = ref({
 
 // 获取本地磁盘
 const getDisk = async () => {
-  const data: string[] = await (window.api as { getDisk: () => Promise<string[]> }).getDisk()
-  diskOptions.value = data
-  diskList.value = data
+  const data = await window.electron.ipcRenderer.invoke('get-disk')
+  const newData = data.map((item: string) => {
+    return {
+      name: item,
+      path: item + '\\'
+    }
+  })
+  diskOptions.value = newData
+  diskList.value = newData
 }
 
-// 选择磁盘
-const getDiskFile = (item) => {
-  console.log(item)
+// 获取本地磁盘下的文件
+const getDiskFile = async (params: IDisk) => {
+  fileForm.value.path = params.path
+  const data = await window.electron.ipcRenderer.invoke('get-disk-file', params.path)
+  diskList.value = data.map((item: string) => {
+    return {
+      name: item,
+      path: params.path + item + '\\'
+    }
+  })
 }
 
 // 确定
-const confirm = () => {}
+const confirm = () => {
+  commonStore.setPath(fileForm.value.path)
+  dialogVisible.value = false
+  emit('getFileMovie')
+}
+
+// 取消
+const close = () => {
+  fileForm.value.path = ''
+}
 
 const openDialog = () => {
   dialogVisible.value = true
@@ -80,6 +115,7 @@ defineExpose({
 .disk-box {
   border: 1px solid #ccc;
   height: 300px;
+  overflow-y: auto;
 
   .disk-item {
     cursor: pointer;

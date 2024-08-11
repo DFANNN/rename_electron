@@ -10,3 +10,15 @@ export interface IMenu {
     icon?: string
   }
 }
+
+// 磁盘列表
+export interface IDisk {
+  name: string
+  path: string
+}
+
+// 电影表格
+export interface IMovie {
+  name: string
+  preview: string
+}

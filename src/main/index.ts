@@ -2,8 +2,13 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { exec } from 'child_process'
-import util from 'util'
+import {
+  getDisk,
+  getDiskFile,
+  replaceFileName,
+  insertFileName,
+  reorderFileNameByIndex
+} from './diskService'
 
 function createWindow(): void {
   // Create the browser window.
@@ -18,6 +23,17 @@ function createWindow(): void {
       sandbox: false
     }
   })
+
+  // 获取磁盘
+  ipcMain.handle('get-disk', getDisk)
+  // 获取文件
+  ipcMain.handle('get-disk-file', getDiskFile as any)
+  // 替换文件名字
+  ipcMain.handle('replace-file-name', replaceFileName as any)
+  // 插入文件名字
+  ipcMain.handle('insert-file-name', insertFileName as any)
+  // 重构文件名字通过序号
+  ipcMain.handle('reorder-file-name', reorderFileNameByIndex as any)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -53,13 +69,6 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
-
-  // 获取磁盘
-  const execPromise = util.promisify(exec)
-  ipcMain.handle('get-disk', async () => {
-    const { stdout } = await execPromise('wmic logicaldisk get name')
-    return stdout.trim().split('\n').slice(1)
-  })
 
   createWindow()
 

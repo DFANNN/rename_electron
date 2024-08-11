@@ -1,9 +1,9 @@
 {
-  "name": "electron-app",
+  "name": "rename",
   "version": "1.0.0",
-  "description": "An Electron application with Vue and TypeScript",
+  "description": "批量对电影文件名进行修改！",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "DFAN",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
@@ -27,6 +27,7 @@
     "electron-updater": "^6.1.7",
     "element-plus": "^2.8.0",
     "less": "^4.2.0",
+    "pinia": "^2.2.1",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
