@@ -7,7 +7,8 @@ export const getDisk = async () => {
   // 把exec转成promise
   const execPromise = util.promisify(exec)
   const { stdout } = await execPromise('wmic logicaldisk get name')
-  return stdout.trim().split('\n').slice(1)
+  const list = stdout.trim().split('\n').slice(1)
+  return list.map((item) => item.trim())
 }
 
 //获取磁盘下的文件

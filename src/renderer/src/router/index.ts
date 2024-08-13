@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  // TODO:注意 electron 打包后，history（createWebHistory）模式下，路由跳转会报错，所以必须要使用hash（createWebHashHistory）模式。
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
@@ -49,6 +50,11 @@ const router = createRouter({
           }
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notFound',
+      component: () => import('@renderer/views/notFound/index.vue')
     }
   ]
 })
