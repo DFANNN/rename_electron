@@ -13,7 +13,7 @@
           <el-icon class="icon-box">
             <img src="../assets/icon.png" alt="icon" class="icon" />
           </el-icon>
-          <template #title><span class="app-name">Rename</span></template>
+          <template #title><span class="app-name">DFAN-Rename</span></template>
         </el-menu-item>
         <el-menu-item
           v-for="item in menu"
@@ -48,7 +48,6 @@ const isCollapse = ref(true)
 // 获取菜单
 const getMenuByRouter = () => {
   menu.value = router.getRoutes().filter((item) => item.name === 'layout')[0].children as IMenu[]
-  console.log(menu.value)
 }
 
 // 导航
@@ -83,9 +82,9 @@ onMounted(() => {
   }
 
   .app-name {
-    font-size: 20px;
-    color: #000;
-    font-weight: 700;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 400;
   }
 }
 

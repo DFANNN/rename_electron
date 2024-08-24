@@ -17,18 +17,30 @@
       <el-form-item label="修改文件地址：" prop="path">
         <el-input v-model="commonStore.path" placeholder="请选择修改文件地址" disabled />
       </el-form-item>
-      <el-form-item label="剧集名：" prop="findContent">
+      <el-form-item label="剧集名：" prop="name">
         <el-input v-model="formData.name" placeholder="请输入剧集名" />
       </el-form-item>
-      <el-form-item label="剧集季：" prop="season">
-        <el-input-number
-          class="input-number"
-          v-model="formData.season"
-          :min="1"
-          :max="100"
-          placeholder="请输入剧集季"
-        />
-      </el-form-item>
+      <div class="season-episode-box">
+        <el-form-item label="剧集季：" class="season-box" prop="season">
+          <el-input-number
+            class="input-number"
+            v-model="formData.season"
+            :min="1"
+            :max="100"
+            placeholder="请输入剧集季"
+          />
+        </el-form-item>
+        <el-form-item label="起始集：" class="episode-box" prop="episode">
+          <el-input-number
+            class="input-number"
+            v-model="formData.episode"
+            :min="1"
+            :max="100"
+            placeholder="请输入剧集起始集"
+          />
+        </el-form-item>
+      </div>
+
       <el-form-item label="操作：">
         <el-button type="primary" class="btn" @click="reset">重置</el-button>
         <el-button type="primary" class="btn" @click="previewRename">预览</el-button>
@@ -62,7 +74,8 @@ const formDataRef = ref<FormInstance>()
 const formData = ref({
   path: '',
   name: '',
-  season: 1
+  season: 1,
+  episode: 1
 })
 
 // 表格
@@ -98,8 +111,11 @@ const getFileMovie = async () => {
 
 // 预览
 const previewRename = () => {
-  tableData.value.forEach((item: IMovie, index: number) => {
-    item.preview = `${formData.value.name} S${formData.value.season.toString().padStart(2, '0')}E${(index + 1).toString().padStart(2, '0')}`
+  let episode = formData.value.episode
+  tableData.value.forEach((item: IMovie, _index: number) => {
+    const fileType = item.name.split('.').pop()
+    item.preview = `${formData.value.name} S${formData.value.season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}.${fileType}`
+    episode++
   })
 }
 
@@ -119,7 +135,11 @@ const confirm = async () => {
   })
 }
 
-onMounted(() => {})
+onMounted(() => {
+  if (commonStore.path) {
+    getFileMovie()
+  }
+})
 </script>
 
 <style scoped lang="less">
@@ -145,5 +165,17 @@ onMounted(() => {})
 
 .input-number {
   width: 100%;
+}
+
+.season-episode-box {
+  display: flex;
+
+  .season-box {
+    flex: 1;
+  }
+
+  .episode-box {
+    flex: 1;
+  }
 }
 </style>

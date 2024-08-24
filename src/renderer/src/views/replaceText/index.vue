@@ -113,7 +113,11 @@ const confirm = async () => {
   })
 }
 
-onMounted(() => {})
+onMounted(() => {
+  if (commonStore.path) {
+    getFileMovie()
+  }
+})
 </script>
 
 <style scoped lang="less">

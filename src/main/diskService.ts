@@ -64,14 +64,16 @@ export const insertFileName = async (event: Event, data: any) => {
 
 //按照序号重构文件名字
 export const reorderFileNameByIndex = async (event: Event, data: any) => {
+  console.log(data)
   const fileList = await getDiskFile(event, data.path)
+  let episode: number = data.episode
   // 使用 map 和 Promise.all 来确保所有文件重命名操作都完成
-  const renamePromises = fileList.map(async (item, index) => {
+  const renamePromises = fileList.map(async (item, _index) => {
     const suffixName = path.extname(item)
-    const newName = `${data.name} S${data.season.toString().padStart(2, '0')}E${(index + 1).toString().padStart(2, '0')}${suffixName}`
+    const newName = `${data.name} S${data.season.toString().padStart(2, '0')}E${episode.toString().padStart(2, '0')}${suffixName}`
     const newNamePath = data.path + newName
     const oldNamePath = data.path + item
-
+    episode++
     await renamePromise(oldNamePath, newNamePath)
     return newName
   })
